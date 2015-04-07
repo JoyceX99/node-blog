@@ -1,0 +1,19 @@
+extends layout
+
+block content
+	h2= title
+	p.view
+		| #{post.date}
+		br
+		br
+		br
+		| #{post.contents}
+		br
+		br
+		br
+		form(name="editpost", method='GET', action='/editpost/#{post.id}')
+			button(type='submit', class='btn btn-default oneline') Edit Post
+			
+		form(name="deletepost", method="POST", action="/deletepost/#{post.id}")
+			button(type="submit", class="btn btn-default oneline") Delete Post
+		

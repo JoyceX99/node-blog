@@ -1,0 +1,54 @@
+doctype html
+html
+	head
+		link(rel='stylesheet', href='/bootstrap/css/bootstrap.min.css')
+		link(rel='stylesheet', href='/stylesheets/style.css')
+		script(src='http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js')
+		script(src='/bootstrap/js/bootstrap.min.js')
+		script(src='/javascripts/script.js')
+		link(rel='stylesheet', type='text/css', href='http://code.jquery.com/ui/1.9.1/themes/base/jquery-ui.css')
+		link(href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css", rel="stylesheet")
+		
+		//Summerset
+		link(rel='stylesheet', href='/dist/summernote.css')
+		script(src='/dist/summernote.min.js')
+		
+		
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Raleway:100|Ubuntu:300|Lato:100|Open+Sans:300> 
+		
+		
+	body
+		.container-fluid
+			//.col-md-10.col-md-offset-1
+			.col-md-9.col-centered
+				.header
+					h1 Sample Blog
+				.customnav
+					ul.customnavbar
+						li.navlink
+							a(href="/") Home
+						li.navlink
+							a(href="/about") About
+						li.navlink
+							a(href="/gallery") Gallery
+						li.navlink
+							a(href="/contact") Contact
+					.clearFix
+				
+				.contentholder
+					if (messages.info)
+						.alert.alert-info.nomargin
+							span= messages.info
+					if (messages.warning)
+						.alert.alert-danger.nomargin
+							span= messages.warning
+					if (messages.success)
+						.alert.alert-success.nomargin
+							span= messages.success
+							
+					.blogspace
+						block content
+					
+					.sidebar
+					
+			

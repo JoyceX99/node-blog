@@ -1,0 +1,16 @@
+extends layout
+
+block content
+	if (true)
+		form(name="newpost",method="get", action="/newpost")
+			button(type="submit" class="btn btn-default center") New Post
+	br
+	each post, i in blog
+		//.postbackground
+		h3
+			a(href="/post/#{post.id}")= post.title
+		if (post.updated) 
+			p Updated #{post.date}
+		else
+			p= post.date
+		

@@ -1,0 +1,16 @@
+extends layout
+
+block content
+	h2 Edit Post
+	br
+	form(name="updatepost", method="POST", action="/updatepost/#{post.id}")
+		.form-group
+			label(class="sr-only" for="title") Title:
+			input(class="form-control", type="text", placeholder="Title", id="title", name="title", style="font-size:10pt", value="#{post.title}")
+		br
+		.form-group
+			label(class="sr-only" for="contents") Post:
+			textarea(class="form-control", placeholder="Blog Post", id="contents", name="contents", rows="10" style="font-size:10pt") #{post.contents}
+			br
+			br
+		button(type="submit" class="btn btn-default") Update Entry
