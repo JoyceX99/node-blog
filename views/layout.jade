@@ -12,9 +12,14 @@ html
 		//Summerset
 		link(rel='stylesheet', href='/dist/summernote.css')
 		script(src='/dist/summernote.min.js')
+		script(src="/dist/plugin/summernote-ext-fontstyle.js")
 		
+		//TinyMCE
+		script(type='text/javascript', src='/tinymce/js/tinymce/tinymce.min.js')
+		script(type='text/javascript', src='/javascripts/init_tinymce.js')
 		
-		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Raleway:100|Ubuntu:300|Lato:100|Open+Sans:300> 
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Raleway:200,400|Ubuntu:300|Lato:400|Open+Sans:300,400> 
+		<link rel="stylesheet" type="text/css"
 		
 		
 	body
@@ -45,10 +50,13 @@ html
 					if (messages.success)
 						.alert.alert-success.nomargin
 							span= messages.success
-							
-					.blogspace
-						block content
 					
-					.sidebar
+					if (sidebar)
+						.blogspace
+							block content
+						.sidebar
+					else
+						.blogspace.nobar
+							block content
 					
 			

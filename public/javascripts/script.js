@@ -1,6 +1,16 @@
 $(document).ready(function() {
 	setHeights();
+	hoverNavBar();
 	
+	$('.show-content').on('click', function() {
+		$('#contents').html(tinymce.get('contents').getContent());
+		//var content = tinyMCE.activeEditor.getContent();
+		alert($('#contents').html());
+	})
+});
+
+
+function hoverNavBar() {
 	$('.navlink').mouseenter(function() {
 		$(this).addClass('outlined');
 	});
@@ -12,21 +22,7 @@ $(document).ready(function() {
 		return false;
 	});
 	
-	/** Set up Summernote **/
-	$('#summernote').summernote({
-		height: 300
-	});
-});
-
-function matchHeights() {
-	var leftHeight = $('.blogspace').height();
-	var rightHeight = $('.sidebar').height();
-	if (leftHeight > rightHeight) {
-		$('.sidebar').height(leftHeight);
-	} else {
-		$('.blogspace').height(rightHeight);
-	}
-};
+}
 
 function setHeights() {
 	//$('.header').height($(window).height());

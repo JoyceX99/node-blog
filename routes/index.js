@@ -8,10 +8,15 @@ router.use(cookieParser('secret'));
 router.use(session({key: "key", secret: "secret", cookie: { maxAge: 60000 }}));
 router.use(flash());
 
+var insession; 
+
 router.use(function(req, res, next) {
 	var sess = req.session;
 	if (sess.user) {
-		req.flash('info', 'In a session');
+		//req.flash('info', 'In a session');
+		insession = true;
+	} else {
+		insession = false;
 	}
 	next();
 });
@@ -30,7 +35,9 @@ router.get('/', function(req, res) {
 	blogPosts.find({ $query: {}, $orderby: { id: -1 } }).toArray(function(e, docs) {
 		res.render('index', {
 			title: 'Sample Blog',
-			blog: docs});
+			blog: docs, 
+			sidebar: true,
+			loggedin: insession});
 	});
 });
 
@@ -88,7 +95,7 @@ router.get('/post/:id', function(req, res) {
 			});
 		}
 		var result = results[0];
-		res.render('post', { title: result.title, post: result});
+		res.render('post', { title: result.title, post: result, sidebar: true});
 	});
 });
 
@@ -200,20 +207,21 @@ router.post('/deletepost/:id', function(req, res) {
 
 /* GET about page */
 router.get('/about', function(req, res) {
-	res.render('about');
+	res.render('about', {sidebar: true});
 })
 
 /* GET contact page */
 router.get('/contact', function(req, res) {
-	res.render('contact');
+	res.render('contact', {sidebar: true});
 })
 
 /* GET gallery page */
 router.get('/gallery', function(req, res) {
-	res.render('gallery');
+	res.render('gallery', {sidebar: true});
 })
 
 function valid(title, contents) {
+	console.log(contents);
 	return (title.trim() && contents.trim());
 }
 
