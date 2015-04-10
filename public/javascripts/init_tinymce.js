@@ -1,5 +1,7 @@
 tinymce.init({
-    selector: "textarea",
+    //selector: "textarea",
+		mode : "specific_textareas",
+		editor_selector : "tinymce",
     plugins: [
         "advlist autolink lists link image charmap print preview anchor",
         "searchreplace visualblocks code fullscreen",

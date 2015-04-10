@@ -28,6 +28,9 @@ html
 			.col-md-9.col-centered
 				.header
 					h1 Sample Blog
+					if (loggedin)
+						form(name="logout", method="POST", action="/logout")
+							button(type='submit', class='btn btn-default logoutbutton') Log Out
 				.customnav
 					ul.customnavbar
 						li.navlink

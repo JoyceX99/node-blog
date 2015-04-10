@@ -8,23 +8,10 @@ block content
 			label(class="sr-only" for="title") Title:
 			input(class="form-control", type="text", placeholder="Title", id="title", name="title", style="font-size:10pt")
 		br
-		
-		//form-group
-		//
-			label(class="sr-only" for="contents") Post:
-			textarea(class="form-control", placeholder="Blog Post", id="contents", name="contents", rows="10" style="font-size:10pt")
-			br
-			br 
-			
-			
-		//.form-group
-		//
-			label(class="sr-only", for="summernote") Post:
-			textarea(class="input-block-level", id="summernote", name="contents", rows="18")
 			
 		.form-group
 			label(class="sr-only", for="contents") Post:
-			textarea(class="input-block-level", id="contents", name="contents", rows="25")
+			textarea.tinymce(class="input-block-level", id="contents", name="contents", rows="25")
 		br
 		
 		//button(type="button", class="btn btn-default show-content") Save

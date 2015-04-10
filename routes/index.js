@@ -8,15 +8,13 @@ router.use(cookieParser('secret'));
 router.use(session({key: "key", secret: "secret", cookie: { maxAge: 60000 }}));
 router.use(flash());
 
-var insession; 
-
 router.use(function(req, res, next) {
 	var sess = req.session;
 	if (sess.user) {
 		//req.flash('info', 'In a session');
-		insession = true;
+		res.locals.loggedin = true;
 	} else {
-		insession = false;
+		res.locals.loggedin = false;
 	}
 	next();
 });
@@ -36,10 +34,11 @@ router.get('/', function(req, res) {
 		res.render('index', {
 			title: 'Sample Blog',
 			blog: docs, 
-			sidebar: true,
-			loggedin: insession});
+			sidebar: true});
 	});
 });
+
+/******************  LOGIN/LOGOUT  ****************/
 
 /* GET login page */
 router.get('/login', function(req, res) {
@@ -73,7 +72,7 @@ router.post('/validatelogin', function(req, res) {
 });
 
 /* GET logout */
-router.get('/logout', function(req, res) {
+router.post('/logout', function(req, res) {
 	req.session.destroy(function(err) {
 		if (err)
 			return res.send(err);	
@@ -81,8 +80,13 @@ router.get('/logout', function(req, res) {
 	});
 });
 
+
+/******************  BLOG POSTS  ******************/
+//-------possibly move all post-related queries to separate doc, use format /posts/:id/(update, submit, etc.)
+
+
 /* GET blog entry */
-router.get('/post/:id', function(req, res) {
+router.get('/post/:id', function(req, res) {        
 	var blogPosts = req.db.collection('blog');
 	var idVal = parseInt(req.params.id);
 	var query = {};
@@ -95,7 +99,7 @@ router.get('/post/:id', function(req, res) {
 			});
 		}
 		var result = results[0];
-		res.render('post', { title: result.title, post: result, sidebar: true});
+		res.render('post', {post: result, id: idVal, sidebar: true});
 	});
 });
 
@@ -150,7 +154,9 @@ router.get('/editpost/:id', function(req, res) {
 				error: err
 			});
 		}
-		res.render('edit-post', {post: docs});
+		res.render('edit-post', {
+			post: docs, 
+		});
 	});
 });
 
@@ -204,6 +210,33 @@ router.post('/deletepost/:id', function(req, res) {
 		res.redirect('/');
 	});
 })
+
+
+/*************** USER COMMENTS *************/
+router.post('/addcomment/:id', function(req, res) {
+	var blogPosts = req.db.collection('blog');
+	blogPosts.update(
+		{'id': +req.params.id},
+		{$set: 
+			{"comment": req.body}
+		}
+	), function(err, docs) {
+		if (err) {
+			return res.render('error', {
+				message: 'There was an error adding your comment',
+				error: err
+			});
+		} else {
+			blogPosts.findOne({'id': +req.params.id}, function(err, doc) {
+				if (err)
+					return err;
+				console.log(doc);
+				res.send(doc);
+			}
+		)}
+	};
+})
+
 
 /* GET about page */
 router.get('/about', function(req, res) {

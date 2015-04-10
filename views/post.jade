@@ -1,19 +1,33 @@
 extends layout
 
 block content
-	h2= title
+	h2 #{post.title}
 	p.view
 		| #{post.date}
-		br
-		br
-		br
-		!{post.contents}
-		br
-		br
-		br
-		form(name="editpost", method='GET', action='/editpost/#{post.id}')
-			button(type='submit', class='btn btn-default oneline') Edit Post
+		.blogpostcontent
+			!{post.contents}
+		if (loggedin)
+			form(name="editpost", method='GET', action='/editpost/#{post.id}')
+				button(type='submit', class='btn btn-default oneline') Edit Post
 			
-		form(name="deletepost", method="POST", action="/deletepost/#{post.id}")
-			button(type="submit", class="btn btn-default oneline") Delete Post
+			form(name="deletepost", method="POST", action="/deletepost/#{post.id}")
+				button(type="submit", class="btn btn-default oneline") Delete Post
+				
+		br
+		br
+		br
+		
+		h4 Leave a Comment:
+		br
+		#postComment
+			fieldset
+				.col-md-10.nopadding
+					input#name(class="form-control input-sm", type="text", placeholder="Name", style="font-size:10pt")
+					br
+					input#email(class="form-control input-sm", type="text", placeholder="Email", style="font-size:10pt")
+					br
+					textarea#comment(class="form-control input-sm", placeholder="Leave a comment!", rows="8" style="font-size:10pt")
+					br
+				button#btnPostComment(type="button", class="btn btn-default", data-id="#{id}") Post comment
+		
 		
