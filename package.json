@@ -19,6 +19,8 @@
 		"express-flash": "*",
 		"connect-flash": "~0.1.1",
 		
+		"async": "*",
+		
 		"mongodb": "~2.0",
 		"mongoskin": "1.4.4"
   }

@@ -29,10 +29,11 @@ h3.blogtitle {
 
 p {
 	font-family: "Helvetica Neue", Helvetica, sans-serif;
+	line-height: 20px;
 }
 
 a {
-  color: #00B7FF;
+  color: #0097FF;
 }
 
 a.headline {
@@ -43,11 +44,15 @@ a.headline {
 .nopadding {
 	padding: 0;
 }
+
 .col-centered {
 	float: none;
 	margin: 0 auto;
 }
 
+.save-whitespace {
+	white-space: pre;
+}
 
 /******** HEADER *********/
 
@@ -156,7 +161,37 @@ a.headline {
 	border-bottom: 1px solid #bbbbbb;
 }
 
-/******** OTHER *********/
+/********** BLOG POST ************/
 .blogpostcontent {
-	padding: 50px 0px 80px 0px;
+	padding: 40px 0px;
+}
+
+.custom-line-height {
+	line-height: 20px;
+}
+
+.edit-delete-post {
+	padding: 30px 0px 50px 0px;
+}
+
+.comment-input {
+	padding: 50px 0px;
+}
+
+.comments {
+	list-style: none;
+	padding: 0;
+}
+
+.comment-holder {
+	margin: 10px 20px 20px 0px;
+	padding: 10px 10px;
+	background: #ffffff;
+	border-radius: 10px;
+	border: 1px solid #aaaaaa;
+}
+
+.time-holder {
+	padding: 0px 0px 0px 20px;
+	color: #aaaaaa;
 }

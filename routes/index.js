@@ -3,6 +3,8 @@ var router = express.Router();
 var flash = require('express-flash');
 var session = require('express-session');
 var cookieParser = require('cookie-parser');
+var async = require('async');
+var utilities = require('../public/javascripts/utilities.js');
 
 router.use(cookieParser('secret'));
 router.use(session({key: "key", secret: "secret", cookie: { maxAge: 60000 }}));
@@ -113,33 +115,40 @@ router.post('/submitpost', function(req, res) {
 	var postTitle = req.body.title;
 	var postContents = req.body.contents;
 	var blogPosts = req.db.collection('blog');
-		
-	if (valid(postTitle, postContents)) {
-		var postDate = getPostDate();
-		blogPosts.findOne({
-			$query: {},
-			$orderby: {id: -1}
-		}, function(err, docs) {
-			var lastId = docs.id;
-			blogPosts.insert({
-				"id" : lastId+1,
-				"title" : postTitle,
-				"date" : postDate,
-				"contents" : postContents
-			}, function(err, doc) {
-			if (err) {
-				return res.render('error', {
-					message: 'There was an error adding to the database',
-					error: err
+	
+	if (utilities.valid(postTitle, postContents)) {
+		var postDate = utilities.getPostDate();
+		async.waterfall([
+			function(callback) {
+				blogPosts.findOne({
+					$query: {},
+					$orderby: {id: -1}
+				}, function(err, doc) {
+					var lastId = doc.id;
+					callback(null, lastId);
+				});
+			},
+			function(lastId, callback) {
+				blogPosts.insert({
+					id : lastId+1,
+					title : postTitle,
+					date : postDate,
+					contents : postContents
+				}, function(err, doc) {
+					if (err) {
+						return res.render('error', {
+							message: 'There was an error adding to the database',
+							error: err
+						});
+					}
+				  res.redirect('/');
 				});
 			}
-		  res.redirect('/');
-		  });
-		});
+		]);
 	} else {
 		req.flash('warning', 'Invalid post. Please try again.');
 		res.render('new-post');
-	}
+	}	
 });
 
 /* GET post in editing form */
@@ -168,17 +177,17 @@ router.post('/updatepost/:id', function(req, res) {
 	var newContents = req.body.contents;
 	var blogPosts = req.db.collection('blog');
 		
-	if (valid(newTitle, newContents)) {
-		var newDate = getPostDate();
+	if (utilities.valid(newTitle, newContents)) {
+		var newDate = utilities.getPostDate();
 		
 		blogPosts.update(
-			{'id': postId},
+			{id: postId},
 			{ $set:
 				{
-					"title": newTitle,
-					"date": newDate,
-					"contents": newContents,
-					"updated": true
+					title: newTitle,
+					date: newDate,
+					contents: newContents,
+					updated: true
 				}
 			}, function(err, doc) {
 				if (err) {
@@ -213,14 +222,46 @@ router.post('/deletepost/:id', function(req, res) {
 
 
 /*************** USER COMMENTS *************/
-router.post('/addcomment/:id', function(req, res) {
-	var blogPosts = req.db.collection('blog');
-	blogPosts.update(
-		{'id': +req.params.id},
-		{$set: 
-			{"comment": req.body}
+router.get('/comments/:id', function(req, res) {
+	var blogComments = req.db.collection('comments');
+	var query = {};
+	query['postId'] = req.params.id;
+	
+	//TODO: fix orderby id to orderby time
+	blogComments.find({ $query: query, $orderby: { time: -1 }}).toArray(function(err, items) {
+	//blogComments.find(query).toArray(function(err, items) {
+		if (err) {
+			return res.render('error', {
+				message: 'There was an error fetching the comments',
+				error: err
+			});
 		}
-	), function(err, docs) {
+		res.json(items);
+	});
+});
+
+
+router.post('/addcomment', function(req, res) {
+	var blogComments = req.db.collection('comments');
+	
+	blogComments.insert(req.body, function(err, doc) {
+		if (err) {
+			return res.render('error', {
+				message: 'There was an error adding your comment',
+				error: err
+			});
+		} else {
+			res.send({msg: ''+doc});
+		}
+	})
+	/*var blogPosts = req.db.collection('blog');
+	var comments = {};
+	
+	blogPosts.update(
+		{id: +req.params.id},
+		{$set: 
+			{comment: req.body}
+		}, function(err, doc) {
 		if (err) {
 			return res.render('error', {
 				message: 'There was an error adding your comment',
@@ -231,11 +272,11 @@ router.post('/addcomment/:id', function(req, res) {
 				if (err)
 					return err;
 				console.log(doc);
-				res.send(doc);
-			}
-		)}
-	};
-})
+				res.send({msg: '' + doc});
+			})
+		}
+	});*/
+});
 
 
 /* GET about page */
@@ -252,21 +293,5 @@ router.get('/contact', function(req, res) {
 router.get('/gallery', function(req, res) {
 	res.render('gallery', {sidebar: true});
 })
-
-function valid(title, contents) {
-	console.log(contents);
-	return (title.trim() && contents.trim());
-}
-
-function getPostDate() {
-	var d = new Date();
-	var months = ["January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-	var month = months[d.getMonth()];
-	var em = (d.getHours() < 12) ? "AM":"PM";
-	var hour = d.getHours() % 12 || 12;
-	var min = (d.getMinutes() < 10) ? '0' + d.getMinutes() : d.getMinutes();
-	return month+" "+d.getDate()+", "+d.getFullYear() + " at " + hour+":"+min+" "+em;
-}
-
 
 module.exports = router;
